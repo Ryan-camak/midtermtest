@@ -1,0 +1,33 @@
+public class AttackCommand implements Command {
+    @Override
+    public void execute(Player player, GameContext context) {
+        Room current = context.getCurrentRoom();
+        Monster monster = current.getMonster();
+        
+        if (monster == null || !monster.isAlive()) {
+            System.out.println("這裡沒有可以攻擊的目標");
+            return;
+        }
+        
+        // 玩家攻击怪物
+        int playerDmg = player.getAttack();
+        monster.takeDamage(playerDmg);
+        player.addDamage(playerDmg);
+        System.out.printf("你對%s造成了%d點傷害！%n", monster.getName(), playerDmg);
+        
+        if (!monster.isAlive()) {
+            System.out.println("你擊敗了" + monster.getName() + "！");
+            player.addKill();
+            return;
+        }
+        
+        // 怪物反击
+        int monsterDmg = monster.getAttack();
+        player.takeDamage(monsterDmg);
+        System.out.printf("%s對你造成了%d點傷害！%n", monster.getName(), monsterDmg);
+        
+        if (!player.isAlive()) {
+            System.out.println("你被" + monster.getName() + "殺死了...");
+        }
+    }
+}
